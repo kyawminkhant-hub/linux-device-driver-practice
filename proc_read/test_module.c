@@ -10,7 +10,7 @@ MODULE_DESCRIPTION("Basic read loadable kernel module");
 #define PROCFS_NAME		"test_module"
 #define PROCFS_MAX_SIZE		1024
 
-/* kernelspace buffer */
+/* kernel space buffer */
 static char procfs_buffer[PROCFS_MAX_SIZE];
 
 /* size of the buffer*/
@@ -24,18 +24,20 @@ static ssize_t test_module_read(struct file* file_pointer,
 		  size_t count, 
 		  loff_t* offset) {
 	
-	static int count_call = 0; 
-	
-       	procfs_buffer_size = snprintf(procfs_buffer, PROCFS_MAX_SIZE, "Read operation: %d times called \n", count_call) + 1; 
+	static int count_call = 1; 
+
+	/* snprintf is used to concatenate two strings */	
+       	procfs_buffer_size = snprintf(procfs_buffer, PROCFS_MAX_SIZE, "Read operation: %d times called\n", count_call) + 1; 
 	
 	int result;
 	
-	printk("%s_read\n", PROCFS_NAME);
+	printk("%s_read: %d times called\n", PROCFS_NAME, count_call);
 
 	if (*offset >= procfs_buffer_size)
 		return 0;
 
 	result = copy_to_user(userspace_buffer, procfs_buffer, procfs_buffer_size);
+	
 	*offset += procfs_buffer_size; 
 	count_call ++;
 
