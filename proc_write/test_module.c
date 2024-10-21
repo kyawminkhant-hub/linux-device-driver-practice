@@ -7,6 +7,7 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Kmk");
 MODULE_DESCRIPTION("Basic read loadable kernel module");
 
+#define PROCFS_NAME		"test_module"
 #define PROCFS_MAX_SIZE		1024
 
 /* create the /proc file */
@@ -37,7 +38,7 @@ static ssize_t test_module_write(struct file* file_pointer,
     		return -EFAULT; //Bad Address
 	}
 
-        printk("test_module_write\n");
+        printk("%s_write\n", PROCFS_NAME);
 	return procfs_buffer_size;
 }
 
@@ -49,7 +50,7 @@ static ssize_t test_module_read(struct file* file_pointer,
 		  		size_t count, 
 		  		loff_t* offset) {
 	int result;
-	printk("test_module_read\n");
+	printk("%s_read\n", PROCFS_NAME);
 
 	if (*offset >= procfs_buffer_size)
 		return 0;
@@ -70,14 +71,14 @@ struct proc_ops driver_proc_ops = {
  */
 static int __init ModuleInit(void) {
 		
-	printk("test_module_init: entry\n");
+	printk("%s_init: entry\n", PROCFS_NAME);
 
-	custom_proc_node = proc_create("test_module",
+	custom_proc_node = proc_create(PROCFS_NAME,
 		       	               0666, 
 				       NULL,
 				       &driver_proc_ops);
                                        
-	printk("test_module_init: exit\n");
+	printk("%s_init: exit\n", PROCFS_NAME);
 	return 0;
 }
 
@@ -85,11 +86,11 @@ static int __init ModuleInit(void) {
  * @breif This function is called, when the module is removed from the kernel
  */
 static void __exit ModuleExit(void) {
-	printk("test_module_exit: entry\n");
+	printk("%s_exit: entry\n", PROCFS_NAME);
 	
 	proc_remove(custom_proc_node);
 
-	printk("test_module_exit: exit\n");
+	printk("%s_exit: exit\n", PROCFS_NAME);
 }
 
 module_init(ModuleInit);

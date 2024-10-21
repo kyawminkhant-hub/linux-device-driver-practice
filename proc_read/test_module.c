@@ -31,7 +31,7 @@ static ssize_t test_module_read(struct file* file_pointer,
 	
 	int result;
 	
-	printk("%s_read: %d times called\n", PROCFS_NAME, count_call);
+	printk("%s_read\n", PROCFS_NAME);
 
 	if (*offset >= procfs_buffer_size)
 		return 0;

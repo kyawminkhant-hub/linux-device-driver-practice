@@ -20,7 +20,6 @@ static int __init hello_init(void) {
  */
 static void __exit hello_exit(void) {
         printk("Goodbye, Kernel\n");
-        //pr_alert("Goodbye, Kernel\n");
 }
 
 module_init(hello_init);
